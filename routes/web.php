@@ -14,13 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('home');
-// });
+Route::match(['get', 'post'], '/', [ConverterController::class, 'index'])->name('converter');
 
-// Route::get('/about', function () {
-//     return view('about', ['nama' => 'Arthur Caesar']);
-// });
 
-Route::get('/', [ConverterController::class, 'index']);
-Route::post('/process', [ConverterController::class, 'process'])->name('converter.process');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+});
+
+Route::get('/login', function () {
+    return view('login', ['nama' => 'Arthur Caesar']);
+});

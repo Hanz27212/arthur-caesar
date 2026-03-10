@@ -6,38 +6,47 @@ use Illuminate\Http\Request;
 
 class ConverterController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('converter');
-    }
+        // Default values
+        $result = null;
+        $text = $request->input('text', '');
+        $key = (int)$request->input('key', 1);
+        $action = $request->input('action', 'encrypt');
 
-    public function process(Request $request)
-    {
-        $text = $request->input('text');
-        $shift = $request->input('shift');
-        $type = $request->input('type'); // encrypt atau decrypt
-        $result = "";
+        // Hanya proses jika request adalah POST
+        if ($request->isMethod('post') && !empty($text)) {
+            $chars = str_split($text);
+            $processedResult = "";
 
-        // Normalisasi shift agar selalu dalam rentang 0-25
-        $shift = $shift % 26;
+            foreach ($chars as $char) {
+                if (preg_match("/[a-z]/i", $char)) {
+                    $isUpper = ctype_upper($char);
+                    $asciiOffset = $isUpper ? 65 : 97;
+                    $charIndex = ord($char) - $asciiOffset;
 
-        foreach (str_split($text) as $char) {
-            if (ctype_alpha($char)) {
-                $asciiOffset = ctype_upper($char) ? 65 : 97;
-                $charPos = ord($char) - $asciiOffset;
+                    if ($action == 'encrypt') {
+                        $newIndex = ($charIndex + $key) % 26;
+                    } else {
+                        $newIndex = ($charIndex - $key) % 26;
+                    }
 
-                if ($type == 'encrypt') {
-                    $newPos = ($charPos + $shift) % 26;
+                    // Pastikan hasil modulo selalu positif (0-25)
+                    if ($newIndex < 0) $newIndex += 26;
+
+                    $processedResult .= chr($newIndex + $asciiOffset);
                 } else {
-                    $newPos = ($charPos - $shift + 26) % 26;
+                    $processedResult .= $char;
                 }
-
-                $result .= chr($newPos + $asciiOffset);
-            } else {
-                $result .= $char; // Karakter non-huruf tidak diubah
             }
+            $result = $processedResult;
         }
 
-        return view('converter', compact('result', 'text', 'shift', 'type'));
+        return view('converter', [
+            'result' => $result,
+            'oldText' => $text,
+            'oldKey' => $key,
+            'oldAction' => $action
+        ]);
     }
 }
