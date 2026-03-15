@@ -1,6 +1,7 @@
 <?php
 
-use App\http\Controllers\ConverterController;
+use App\Http\Controllers\ConverterController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,14 +15,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::match(['get', 'post'], '/', [ConverterController::class, 'index'])->name('converter');
-
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/', function () {
+    return view('welcome');
 });
 
-Route::get('/login', function () {
-    return view('login', ['nama' => 'Arthur Caesar']);
+//Route untuk converter
+Route::match(['get', 'post'], '/converter', [ConverterController::class, 'index'])->name('converter');
+
+// Route untuk auth
+Route::get('/login', [AuthController::class, 'showLogin']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware(['AuthMiddleware'])->group(function () {
+    Route::get('/dashboard', [AuthController::class, 'dashboard']);
 });
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// });
+
+// Route::get('/login', function () {
+//     return view('login', ['nama' => 'Arthur Caesar']);
+// });
