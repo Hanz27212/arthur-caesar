@@ -29,12 +29,3 @@ Route::middleware(['AuthMiddleware'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard']);
 });
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// });
-
-// Route::get('/login', function () {
-//     return view('login', ['nama' => 'Arthur Caesar']);
-// });
