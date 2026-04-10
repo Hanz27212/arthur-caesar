@@ -19,13 +19,20 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Route untuk converter
+//ROUTE UNTUK CONVERTER
 Route::match(['get', 'post'], '/converter', [ConverterController::class, 'index'])->name('converter');
 
-// Route untuk auth
-Route::get('/login', [AuthController::class, 'showLogin']);
-Route::post('/login', [AuthController::class, 'login']);
+// #### ROUTE UNTUK AUTH ####
+
+// Route Login
+Route::get('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'prosesLogin']);
+
+//Route untuk dashboard 
 Route::middleware(['AuthMiddleware'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard']);
 });
+Route::get('/daftar_pengguna', [AuthController::class, 'daftarPengguna']);
+
+// Route untuk logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

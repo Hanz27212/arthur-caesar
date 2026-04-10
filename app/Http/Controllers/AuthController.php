@@ -3,33 +3,40 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
 
-    public function showLogin()
+    public function login()
     {
         return view('login');
     }
 
-    public function login(Request $request)
+    public function prosesLogin(Request $request)
     {
-
         $email = $request->email;
         $password = $request->password;
 
-        // dummy login tanpa database
-        if ($email == "admin@gmail.com" && $password == "123456") {
+        $user = DB::table('pengguna')
+            ->where('email', $email)
+            ->where('password', $password)
+            ->first();
 
-            session([
-                'user' => $email
-            ]);
-
-            return redirect('dashboard');
+        if ($user) {
+            session(['login' => true]);
+            return redirect('/daftar_pengguna');
+        } else {
+            return redirect('/login')->with('error', 'Email atau password salah');
         }
+    }
 
-        return redirect()->back()->with('error', 'Email atau password salah');
+    public function daftarPengguna()
+    {
+        $users = DB::table('pengguna')->get();
+
+        return view('daftar_pengguna', compact('users'));
     }
 
     public function dashboard()
