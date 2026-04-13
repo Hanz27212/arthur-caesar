@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -30,13 +29,6 @@ class AuthController extends Controller
         } else {
             return redirect('/login')->with('error', 'Email atau password salah');
         }
-    }
-
-    public function daftarPengguna()
-    {
-        $users = DB::table('pengguna')->get();
-
-        return view('daftar_pengguna', compact('users'));
     }
 
     public function dashboard()

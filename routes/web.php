@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ConverterController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,9 +32,23 @@ Route::post('/login', [AuthController::class, 'prosesLogin']);
 
 //Route untuk dashboard 
 Route::middleware(['AuthMiddleware'])->group(function () {
-    Route::get('/dashboard', [AuthController::class, 'dashboard']);
+    Route::get('/dashboard', [DashboardController::class, 'dashboard']);
 });
-Route::get('/daftar_pengguna', [AuthController::class, 'daftarPengguna']);
+
+//Route untuk daftar Pengguna 
+// daftar pengguna
+Route::get('/daftar_pengguna', [PenggunaController::class, 'index']);
+
+// tambah
+Route::get('/tambah_pengguna', [PenggunaController::class, 'create']);
+Route::post('/tambah_pengguna', [PenggunaController::class, 'store']);
+
+// edit
+Route::get('/edit/{id}', [PenggunaController::class, 'edit']);
+Route::post('/update/{id}', [PenggunaController::class, 'update']);
+
+// hapus
+Route::get('/delete/{id}', [PenggunaController::class, 'destroy']);
 
 // Route untuk logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
